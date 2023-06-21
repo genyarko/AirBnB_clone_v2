@@ -90,4 +90,3 @@ class Place(BaseModel, Base):
             result = storage.all(Review)
             return [review_obj for review_obj in result.values()
                     if self.id == review_obj.place_id]
-
