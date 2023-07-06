@@ -1,33 +1,44 @@
 #!/usr/bin/env bash
-# Install Nginx if not already installed
-if ! command -v nginx &> /dev/null; then
-    sudo apt-get update
-    sudo apt-get install -y nginx
+# Prepare my webservers (web-01 & web-02)
+
+# uncomment for easy debugging
+#set -x
+
+# colors
+blue='\e[1;34m'
+#brown='\e[0;33m'
+green='\e[1;32m'
+reset='\033[0m'
+
+echo -e "${blue}Updating and doing some minor checks...${reset}\n"
+
+# install nginx if not present
+if [ ! -x /usr/sbin/nginx ]; then
+	sudo apt-get update -y -qq && \
+	     sudo apt-get install -y nginx
 fi
 
-# Create necessary folders if they don't exist
-sudo mkdir -p /data/web_static/releases/test/
-sudo mkdir -p /data/web_static/shared/
+echo -e "\n${blue}Setting up some minor stuff.${reset}\n"
 
-# Create a fake HTML file for testing
-sudo echo "<html>
-    <head>
-        <title>Test Page</title>
-    </head>
-    <body>
-        <h1>This is a test page</h1>
-    </body>
-</html>" | sudo tee /data/web_static/releases/test/index.html
+# Create directories...
+sudo mkdir -p /data/web_static/releases/test /data/web_static/shared/
 
-# Create or recreate symbolic link
-sudo rm -rf /data/web_static/current
-sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
+# create index.html for test directory
+echo "<h1>Welcome to th3gr00t.tech <\h1>" | sudo dd status=none of=/data/web_static/releases/test/index.html
 
-# Set ownership of the /data/ folder recursively
+# create symbolic link
+sudo ln -sf /data/web_static/releases/test /data/web_static/current
+
+# give user ownership to directory
 sudo chown -R ubuntu:ubuntu /data/
 
-# Update Nginx configuration
-sudo sed -i '/^\tlocation \/ {$/i\\n\tlocation /hbnb_static {\n\t\talias /data/web_static/current/;\n\t}\n' /etc/nginx/sites-available/default
+# backup default server config file
+sudo cp /etc/nginx/sites-enabled/default nginx-sites-enabled_default.backup
 
-# Restart Nginx
+# Set-up the content of /data/web_static/current/ to redirect
+# to domain.tech/hbnb_static
+sudo sed -i '37i\\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}\n' /etc/nginx/sites-available/default
+
 sudo service nginx restart
+
+echo -e "${green}Completed${reset}"
