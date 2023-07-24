@@ -18,7 +18,7 @@ class State(BaseModel, Base):
     else:
         name = ''
 
-      @property
+        @property
         def cities(self):
             """ returns the list of City instances
             with state_id equals to the current State.id"""

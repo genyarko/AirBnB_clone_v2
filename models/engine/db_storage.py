@@ -21,7 +21,6 @@ class DBStorage():
     __engine = None
     __session = None
 
-   
     def __init__(self):
         """Initialize the Database storage"""
         user = getenv('HBNB_MYSQL_USER', 'hbnb_dev')
