@@ -18,19 +18,15 @@ class State(BaseModel, Base):
     else:
         name = ''
 
-        @property
-    def cities(self):
-        """
-        Getter method to return the list of City objects from storage
-        linked to the current State (only if the storage engine is not DBStorage)
-        """
-        from models import storage
-        from models.city import City
-        city_list = []
-        for city in storage.all(City).values():
-            if city.state_id == self.id:
-                city_list.append(city)
-        return city_list
+      @property
+        def cities(self):
+            """ returns the list of City instances
+            with state_id equals to the current State.id"""
+            from models import storage
+            from models.city import City
+            cities_dict = storage.all(City)
+            return [obj for obj in cities_dict.values()
+                    if obj.state_id == self.id]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
