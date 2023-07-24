@@ -21,13 +21,7 @@ class DBStorage():
     __engine = None
     __session = None
 
-    def close(self):
-        """
-        Calls remove() method on the private session attribute (self.__session)
-        or call close() on the Session class.
-        """
-        self.__session.close()
-
+   
     def __init__(self):
         """Initialize the Database storage"""
         user = getenv('HBNB_MYSQL_USER', 'hbnb_dev')
