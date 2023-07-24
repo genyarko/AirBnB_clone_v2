@@ -8,11 +8,7 @@ class FileStorage:
     __file_path = 'file.json'
     __objects = {}
 
-     def close(self):
-        """
-        Calls reload() method for deserializing the JSON file to objects
-        """
-        self.reload()
+     
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
